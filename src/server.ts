@@ -23,6 +23,10 @@ import limiter from './lib/express_rate_limits';
  */
 import type {CorsOptions} from 'cors'
 
+/**
+ * Router
+ */
+import v1Routes from './routes/v1/index'
 
 
 const app = express();
@@ -57,19 +61,17 @@ app.use(compression({
 }))
 
 //use helmet to enhance security by setting various http headers 
-// app.use(helmet());
+app.use(helmet());
 
 //apply rate limiting middleware to prevent excessive requests and enhance security
 app.use(limiter);
 
 
-(async()=>{
+//Immediately invoke async function expression to start the server.
+
  try{
-     app.get('/', (req, res)=>{
-         res.json({
-             message: 'Hello World'
-         })
-     })
+    app.use('/api/v1', v1Routes);
+     
      app.listen(config.PORT, () => {
        console.log(`Server is running on: http://localhost:${config.PORT}`);
      });
@@ -80,4 +82,18 @@ app.use(limiter);
         process.exit(1);
     }
  }
-})
+
+
+ const handleServerShutdown= async() =>{
+    try{
+        console.log(`Server shutdown`)
+        process.exit(0)
+    }catch(err){
+        console.log('Failed to shutdown the server', err);
+        process.exit(1);
+    }
+ }
+
+
+ process.on("SIGTERM", handleServerShutdown);
+ process.on("SIGINT", handleServerShutdown);
