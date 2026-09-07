@@ -1,5 +1,6 @@
 node_modules
 .env
+atlas-credentials.env
 ReadmeDev.md
 # Output
 dist

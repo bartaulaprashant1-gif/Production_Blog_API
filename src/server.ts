@@ -17,6 +17,7 @@ import helmet from 'helmet';
 */
 import config from './config/index';
 import limiter from './lib/express_rate_limits';
+import { connectToDatabase, disconnectFromDatabase } from './lib/mongoose';
 
 /**
  * Types
@@ -69,23 +70,27 @@ app.use(limiter);
 
 //Immediately invoke async function expression to start the server.
 
- try{
-    app.use('/api/v1', v1Routes);
-     
-     app.listen(config.PORT, () => {
-       console.log(`Server is running on: http://localhost:${config.PORT}`);
-     });
- }catch(err){
-    console.log('Failed to start the server', err);
-
-    if(config.NODE_ENV==='production'){
-        process.exit(1);
+(async()=>{
+    try{
+        await connectToDatabase();
+       app.use('/api/v1', v1Routes);
+        
+        app.listen(config.PORT, () => {
+          console.log(`Server is running on: http://localhost:${config.PORT}`);
+        });
+    }catch(err){
+       console.log('Failed to start the server', err);
+   
+       if(config.NODE_ENV==='production'){
+           process.exit(1);
+       }
     }
- }
+})();
 
 
  const handleServerShutdown= async() =>{
     try{
+        await disconnectFromDatabase();
         console.log(`Server shutdown`)
         process.exit(0)
     }catch(err){
