@@ -6,7 +6,10 @@ import validationError from '../../middleware/validationError';
 import authorize from '../../middleware/authorize';
 import getCurrentUser from '../../controllers/v1/user/get_current_user';
 import updateCurrentUser from '../../controllers/v1/user/update_current_user';
-import deleteCurrentUser from '../../controllers/v1/user/delete_user';
+import deleteCurrentUser from '../../controllers/v1/user/delete_current_user';
+import getAllUsers from '../../controllers/v1/user/get_all_users';
+import getUser from '../../controllers/v1/user/get_user';
+import deleteUser from '../../controllers/v1/user/delete_user';
 
 import User from '../../models/user';
 
@@ -80,7 +83,28 @@ router.put(
 
 router.delete(
   '/current',
-  authenticate,authorize(['admin', 'user']),deleteCurrentUser)
+  authenticate,
+  authorize(['admin', 'user']),
+  deleteCurrentUser,
+);
 
-router.get('/', authenticate, authorize(['admin']), getAllUsers)
+router.get(
+  '/',
+  authenticate,
+  authorize(['admin']),
+  query('limit')
+    .optional()
+    .isInt({ min: 1, max: 50 })
+    .withMessage('limit must be between 1 and 50'),
+  query('offset')
+    .optional()
+    .isInt({ min: 0 })
+    .withMessage('offset must be a positive number'),
+  validationError,
+  getAllUsers,
+);
+
+router.get('/:userId', authenticate, authorize(['admin']), param('userId').notEmpty().isMongoId().withMessage('Invalid user Id'), validationError, getUser);
+router.delete('/:userId', authenticate, authorize(['admin']), param('userId').notEmpty().isMongoId().withMessage('Invalid user Id'), validationError, deleteUser);
+
 export default router;

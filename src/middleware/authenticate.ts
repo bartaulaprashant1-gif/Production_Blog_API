@@ -9,7 +9,7 @@ import { Types } from 'mongoose';
 const authenticate = (req: Request, res: Response, next: NextFunction) => {
   const authHeader = req.headers.authorization;
 
-  if (!authHeader?.startsWith('Bearer ')) {
+  if (!authHeader?.startsWith('Bearer')) {
     res.status(401).json({
       code: 'AuthenticationError',
       message: 'Access denied, no token provided',

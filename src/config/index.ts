@@ -22,7 +22,9 @@ const config={
   WHITELIST_ADMINS_MAIL:[
     'prashant07@gmail.com',
     'prashant10@gmail.com'
-  ]
+  ],
+  defaultResLimit:20,
+  defaultResOffset:0,
 
 }
 
