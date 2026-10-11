@@ -23,7 +23,7 @@ const userSchema=new Schema<IUser>({
     username: {
         type: String,
         required: [true, "username is required"],
-        unique: true,
+        unique: [true, 'Username must be unique'],
         maxLength: [20, 'username must be less than 20 characters']
     },
     email:{
@@ -35,7 +35,6 @@ const userSchema=new Schema<IUser>({
     password:{
         type: String,
         required: [true, "password is required"],
-        maxLength: [15, 'password must be less than 50 characters'],
         select: false
     },
     role: {
@@ -48,12 +47,10 @@ const userSchema=new Schema<IUser>({
     },
     firstName:{
         type: String,
-        required: [true, "first name is required"],
         maxLength: [20, 'first name must be less than 20 characters']
     },
     lastName: {
         type: String,
-        required: [true, "last name is required"],
         maxLength: [20, 'last name must be less than 20 characters']
     },
     socialLinks:{

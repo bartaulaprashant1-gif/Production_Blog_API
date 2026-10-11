@@ -18,6 +18,7 @@ const login = async (req: Request, res: Response): Promise<void> => {
       .lean()
       .exec();
 
+      // console.log(user, ' this is the user')
     if (!user) {
       res.status(404).json({
         code: 'Not Found',
