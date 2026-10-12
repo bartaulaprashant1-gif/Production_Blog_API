@@ -5,6 +5,7 @@ const router=Router();
 //Routes 
 import authRoutes from './auth';
 import userRoutes from './user';
+import blogRoutes from './blog';
 
 router.get('/', (req, res)=>{
     res.status(400).json({
@@ -17,5 +18,6 @@ router.get('/', (req, res)=>{
 } )
 router.use('/auth', authRoutes);
 router.use('/users', userRoutes);
+router.use('/blogs', blogRoutes);
 
 export default router;
