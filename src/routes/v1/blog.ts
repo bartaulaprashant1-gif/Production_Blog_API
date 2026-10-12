@@ -8,6 +8,9 @@ import authorize from '../../middleware/authorize';
 import uploadBlogBanner from '../../middleware/uploadBlogBanner';
 
 import createBlog from '../../controllers/v1/blog/create_blog';
+import getAllBlogs from '../../controllers/v1/blog/get_all_blogs';
+import getBlogsByUser from '../../controllers/v1/blog/get_blogs_by_user';
+import getBlogsBySlug from '../../controllers/v1/blog/get_blogs_by_slug';
 
 const upload = multer();
 
@@ -32,6 +35,45 @@ router.post(
   validationError,
   uploadBlogBanner('post'),
   createBlog,
+);
+router.get(
+  '/',
+  authenticate,
+  authorize(['admin', 'user']),
+  query('limit')
+    .optional()
+    .isInt({ min: 1, max: 50 })
+    .withMessage('limit must be between 1 and 50'),
+  query('offset')
+    .optional()
+    .isInt({ min: 0 })
+    .withMessage('offset must be a positive number'),
+  validationError,
+  getAllBlogs,
+);
+router.get(
+  '/user/:userId',
+  authenticate,
+  authorize(['admin', 'user']),
+  param('userId').isMongoId().withMessage('Invalid user Id'),
+  query('limit')
+    .optional()
+    .isInt({ min: 1, max: 50 })
+    .withMessage('limit must be between 1 and 50'),
+  query('offset')
+    .optional()
+    .isInt({ min: 0 })
+    .withMessage('offset must be a positive number'),
+  validationError,
+  getBlogsByUser,
+);
+router.get(
+  '/:slug',
+  authenticate,
+  authorize(['admin', 'user']),
+  param('slug').notEmpty().withMessage('Slug is required'),
+  validationError,
+  getBlogsBySlug
 );
 
 export default router;
