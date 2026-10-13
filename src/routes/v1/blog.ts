@@ -10,7 +10,10 @@ import uploadBlogBanner from '../../middleware/uploadBlogBanner';
 import createBlog from '../../controllers/v1/blog/create_blog';
 import getAllBlogs from '../../controllers/v1/blog/get_all_blogs';
 import getBlogsByUser from '../../controllers/v1/blog/get_blogs_by_user';
-import getBlogsBySlug from '../../controllers/v1/blog/get_blogs_by_slug';
+import getBlogBySlug from '../../controllers/v1/blog/get_blogs_by_slug';
+import updateBlog from '../../controllers/v1/blog/update_blog';
+import deleteBlog from '../../controllers/v1/blog/delete_blog';
+
 
 const upload = multer();
 
@@ -73,7 +76,34 @@ router.get(
   authorize(['admin', 'user']),
   param('slug').notEmpty().withMessage('Slug is required'),
   validationError,
-  getBlogsBySlug
+  getBlogBySlug,
 );
-
+router.put(
+  '/:blogId',
+  authenticate,
+  authorize(['admin']),
+  param('blogId').isMongoId().withMessage('Invalid blog Id'),
+  validationError,
+  upload.single('banner_image'),
+  body('title')
+    .optional()
+    .trim()
+    .isLength({ max: 180 })
+    .withMessage('Title must be less than 180 characters'),
+  body('content'),
+  body('status')
+    .optional()
+    .isIn(['draft', 'published'])
+    .withMessage('Status must be in draft or published'),
+  validationError,
+  uploadBlogBanner('put'),
+  updateBlog,
+);
+router.delete(
+  '/:blogId',
+  authenticate,
+  authorize(['admin']),
+  param('blogId').isMongoId().withMessage('Invalid blog Id'),
+  deleteBlog
+);
 export default router;
