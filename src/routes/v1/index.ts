@@ -7,6 +7,7 @@ import authRoutes from './auth';
 import userRoutes from './user';
 import blogRoutes from './blog';
 import likeRoutes from './like';
+import commentRoutes from './comment';
 
 router.get('/', (req, res)=>{
     res.status(400).json({
@@ -20,6 +21,7 @@ router.get('/', (req, res)=>{
 router.use('/auth', authRoutes);
 router.use('/users', userRoutes);
 router.use('/blogs', blogRoutes);
-router.use('/likes', likeRoutes)
+router.use('/likes', likeRoutes);
+router.use('/comments', commentRoutes);
 
 export default router;
